@@ -1,13 +1,15 @@
-!pip install -r requirements.txt
+#!pip install -r requirements.txt
 import streamlit as st
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
+#from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-from langchain.chat_models import OpenAI
+from langchain.chat_models import ChatOpenAI
+from htmlTemplates import css, bot_template, user_template
+
 
 def get_pdf_text(pdf_docs):
     text = ""
@@ -45,12 +47,20 @@ def get_conversation_chain(vectorstore):
 
 def main():
     load_dotenv()   
-
     st.set_page_config(page_title="Chat with multiple PDFs", page_icon=":books:")
+
+    st.write(css, unsafe_allow_html=True)
+
+    if "conversation" not in st.session_state:
+        st.session_state.conversation = None
 
     st.header("Chat with multiple PDFs :books:")
     st.text_input("Ask a question about your documents")
     
+    st.write(user_template.replace("{{MSG}}", "hello robot"), unsafe_allow_html=True)
+    st.write(bot_template.replace("{{MSG}}", "hello human"), unsafe_allow_html=True)
+   
+
     with st.sidebar:
         st.subheader("Add your documents")
         pdf_docs = st.file_uploader(
@@ -69,7 +79,7 @@ def main():
                 vectorstore = get_vectorestore(text_chunks)
 
                 # create conversation chain
-                conversation = get_conversation_chain(vectorstore)
+                st.session_state.conversation = get_conversation_chain(vectorstore)
 
 
 
