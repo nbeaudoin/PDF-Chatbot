@@ -56,8 +56,8 @@ def main():
     st.header("Chat with multiple PDFs :books:")
     st.text_input("Ask a question about your documents")
     
-    st.write(user_template.replace("{{MSG}}", "hello robot"), unsafe_allow_html=True)
-    st.write(bot_template.replace("{{MSG}}", "hello human"), unsafe_allow_html=True)
+    st.write(user_template.replace("{{MSG}}", "Hello Chatbot"), unsafe_allow_html=True)
+    st.write(bot_template.replace("{{MSG}}", "Hi Nick!"), unsafe_allow_html=True)
    
 
     with st.sidebar:
