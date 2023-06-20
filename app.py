@@ -3,7 +3,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
-#from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
+from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
@@ -30,13 +30,12 @@ def get_text_chunks(text):
     return chunks
 
 def get_vectorestore(text_chunks):
-    #embeddings = OpenAIEmbeddings()
-    embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
+    embeddings = OpenAIEmbeddings()
     vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     return vectorstore
 
 def get_conversation_chain(vectorstore):
-    llm = OpenAI()
+    llm = ChatOpenAI()
     memory = ConversationBufferMemory(memory_key="chat_history", return_message=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm, 
