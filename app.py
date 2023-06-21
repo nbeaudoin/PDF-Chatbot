@@ -46,7 +46,13 @@ def get_conversation_chain(vectorstore):
 
 def handle_userinput(user_question):
     response = st.session_state.conversation({'question': user_question})
-    st.write(response)
+    st.session_state.chat_history = response['chat_history']
+
+    for i, message in enumerate(st.session_state.chat_history):
+        if i % 2 == 0:
+            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
+        else:
+            st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
 
 def main():
     load_dotenv()   
@@ -55,14 +61,16 @@ def main():
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = None
 
     st.header("Chat with multiple PDFs :books:")
     user_question = st.text_input("Ask a question about your documents:")
     if user_question:
         handle_userinput(user_question)
     
-    st.write(user_template.replace("{{MSG}}", "Hello Chatbot"), unsafe_allow_html=True)
-    st.write(bot_template.replace("{{MSG}}", "Hi Nick!"), unsafe_allow_html=True)
+    #st.write(user_template.replace("{{MSG}}", "Hello Chatbot"), unsafe_allow_html=True)
+    #st.write(bot_template.replace("{{MSG}}", "Hi Nick!"), unsafe_allow_html=True)
    
 
     with st.sidebar:
@@ -73,7 +81,7 @@ def main():
             with st.spinner("Processing"):
                 # get PDF text
                 raw_text = get_pdf_text(pdf_docs)
-                st.write(raw_text)
+                #st.write(raw_text)
 
                 # get the text chunks
                 text_chunks = get_text_chunks(raw_text)
