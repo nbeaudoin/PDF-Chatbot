@@ -18,7 +18,7 @@ def get_pdf_text(pdf_docs):
         for page in pdf_reader.pages:
             text += page.extract_text()
     return text
-    
+
 def get_text_chunks(text):
     text_splitter = CharacterTextSplitter(
         separator="\n",
@@ -29,14 +29,14 @@ def get_text_chunks(text):
     chunks = text_splitter.split_text(text)
     return chunks
 
-def get_vectorestore(text_chunks):
+def get_vectorstore(text_chunks):
     embeddings = OpenAIEmbeddings()
     vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     return vectorstore
 
 def get_conversation_chain(vectorstore):
     llm = ChatOpenAI()
-    memory = ConversationBufferMemory(memory_key="chat_history", return_message=True)
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm, 
         retriever=vectorstore.as_retriever(),
@@ -69,10 +69,6 @@ def main():
     if user_question:
         handle_userinput(user_question)
     
-    #st.write(user_template.replace("{{MSG}}", "Hello Chatbot"), unsafe_allow_html=True)
-    #st.write(bot_template.replace("{{MSG}}", "Hi Nick!"), unsafe_allow_html=True)
-   
-
     with st.sidebar:
         st.subheader("Add your documents")
         pdf_docs = st.file_uploader(
@@ -88,7 +84,7 @@ def main():
                 #st.write(text_chunks)
                 
                 # create vector store
-                vectorstore = get_vectorestore(text_chunks)
+                vectorstore = get_vectorstore(text_chunks)
 
                 # create conversation chain
                 st.session_state.conversation = get_conversation_chain(vectorstore)
