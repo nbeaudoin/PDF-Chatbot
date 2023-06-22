@@ -7,4 +7,4 @@ From tutorial: https://www.youtube.com/watch?v=dXxQ0LR-3Hg
 
 Finished product (tailored to my use case)
 
-![Alt text](app_image.jpg?raw=true "Working ChatBot for Multiple PDFs")
+![Model](app_image.jpg)
